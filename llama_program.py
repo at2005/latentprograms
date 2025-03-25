@@ -1,5 +1,5 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
-from common import num_program_tokens, vocab_size
+
 from grpo import (
     lr,
     NUM_GRPO_ITERS,
@@ -19,10 +19,9 @@ tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B")
 tokenizer.pad_token = tokenizer.eos_token
 tokenizer.padding_side = 'left'
 
-# device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+num_program_tokens = 1000
 
-
-prompt_groups = [
+sample_prompt_groups = [
     "The capital of France is",
     "Shakespeare wrote",
     "Jane Austen wrote",
@@ -31,10 +30,11 @@ prompt_groups = [
     "The speed of light is",
     "The closest star to Earth is",
 ]
-GRPO_BATCH_SIZE = len(prompt_groups)
+GRPO_BATCH_SIZE = len(sample_prompt_groups)
 
 
 def get_model(src=None):
+    
     if src:
         config = AutoConfig.from_pretrained("meta-llama/Llama-3.1-8B")
         model = AutoModelForCausalLM.from_config(config)
@@ -79,7 +79,7 @@ def process_prompts(model, inputs):
 
 
 def sample_batch():
-    return get_tokenised_prompts(prompt_groups)
+    return get_tokenised_prompts(sample_prompt_groups)
 
 
 def train_grpo_llama():
